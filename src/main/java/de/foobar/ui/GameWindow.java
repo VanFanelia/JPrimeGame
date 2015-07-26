@@ -95,7 +95,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
 		generateCurrentFightPanel(gblm);
 
-		generateLastFightPanel(gblm);
+		generateLastFightPanel();
 
 		generateResultTable(gblm);
 
@@ -173,7 +173,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 	private void generateResultTable(GridBagLayoutManager gblm)
 	{
 		this.resultTable = new JTable();
-		this.resultTable.setModel(new PlayerResultTableModel(new ResultMap(new ArrayList<IPlayer>())));
+		this.resultTable.setModel(new PlayerResultTableModel(new ResultMap(new ArrayList<>())));
 		this.resultTable.setFillsViewportHeight(true);
 		this.resultTable.setPreferredScrollableViewportSize(new Dimension(this.resultTable.getPreferredScrollableViewportSize().width,DEFAULT_TABLE_HEIGHT));
 
@@ -202,13 +202,14 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 		gblm.addComponent(currentFightPanel,0,1,3,1);
 	}
 
-	private void generateLastFightPanel(GridBagLayoutManager gblm)
+	private void generateLastFightPanel()
 	{
 		this.initLastRound();
 
 	}
 
-	private void initLastRound() {
+	private void initLastRound()
+	{
 		this.setLastRound(null);
 	}
 
@@ -321,9 +322,6 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 		return tableModel;
 	}
 
-	public void setTableModel(PlayerResultTableModel tableModel) {
-		this.tableModel = tableModel;
-	}
 
 	public void update(Graphics g) {
 		paint(g);
