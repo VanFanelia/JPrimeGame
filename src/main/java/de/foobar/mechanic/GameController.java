@@ -89,7 +89,7 @@ public class GameController {
 	private void startRound(Round round) {
 		this.lastRound = this.currentRound;
 		this.currentRound = round;
-		this.gameWindow.setPlayers(round.getPlayer1(), round.getPlayer2());
+		this.gameWindow.setCurrentPlayersPlayers(round.getPlayer1(), round.getPlayer2());
 		this.gameWindow.setLastRound(this.lastRound);
 		this.gameWindow.setProgress(roundsPlayed, this.getRoundCount());
 	}

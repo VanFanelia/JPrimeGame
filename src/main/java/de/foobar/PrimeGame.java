@@ -8,16 +8,21 @@ import de.foobar.ui.GameWindow;
  */
 public class PrimeGame {
 
+  public GameWindow gameWindow;
 
-	public GameWindow gameWindow;
+  public GameController gameController;
 
-	public GameController gameController;
+  public static PrimeGame instance;
 
-	public static void main(String[] args)
-	{
-		PrimeGame game = new PrimeGame();
-		game.gameController = new GameController();
-		game.gameWindow = new GameWindow(game.gameController);
-		game.gameController.setGameWindow(game.gameWindow);
-	}
+  /**
+   * Global main class.
+   * @param args command line args
+   */
+  public static void main(String[] args) {
+    instance = new PrimeGame();
+    instance.gameController = new GameController();
+    instance.gameWindow = new GameWindow(instance.gameController);
+    instance.gameController.setGameWindow(instance.gameWindow);
+    System.out.println(instance);
+  }
 }

@@ -181,6 +181,10 @@ Modifications for this project marked with comments
       <property name="tagOrder" value="@param, @return, @throws, @deprecated"/>
       <property name="target" value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
     </module>
+    <module name="JavadocStyle"> <!-- modify by van -->
+      <property name="scope" value="private" />
+      <property name="checkFirstSentence" value="false"/> <!-- stupid . on end of line -->
+    </module>
     <module name="JavadocMethod">
       <property name="scope" value="public"/>
       <property name="allowMissingParamTags" value="true"/>
@@ -196,5 +200,9 @@ Modifications for this project marked with comments
                value="Method name ''{0}'' must match pattern ''{1}''."/>
     </module>
     <module name="SingleLineJavadoc"/>
+
+    <module name="ImportOrder"><!-- ignore ordering -->
+      <property name="ordered" value="false"/>
+    </module>
   </module>
 </module>
