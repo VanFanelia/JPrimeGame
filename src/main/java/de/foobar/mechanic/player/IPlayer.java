@@ -3,16 +3,16 @@ package de.foobar.mechanic.player;
 import java.awt.image.BufferedImage;
 
 /**
- * Editor: van on 24.03.15.
+ * Interface to implement for a Player.
  */
-public interface IPlayer
-{
-	public String getPlayerName();
+public interface IPlayer {
 
-	public BufferedImage getPlayerImage();
+  public String getPlayerName();
 
-	public void initNumbers(int[] numbers);
+  public BufferedImage getPlayerImage();
 
-	public int pickNumber(int[] currentNumbers, int enemyScore, int yourScore);
+  public void initNumbers(int[] numbers);
+
+  public int pickNumber(int[] currentNumbers, int enemyScore, int yourScore);
 
 }

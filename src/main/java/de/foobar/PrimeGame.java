@@ -3,9 +3,6 @@ package de.foobar;
 import de.foobar.mechanic.GameController;
 import de.foobar.ui.GameWindow;
 
-/**
- * Editor: van on 24.03.15.
- */
 public class PrimeGame {
 
   public GameWindow gameWindow;

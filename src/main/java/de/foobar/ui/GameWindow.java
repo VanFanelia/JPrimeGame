@@ -42,9 +42,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
-/**
- * Editor: van on 24.03.15.
- */
+
 public class GameWindow extends JFrame implements WindowConstants, Accessible, RootPaneContainer {
   public static final int DEFAULT_WINDOW_HEIGHT = 600;
   public static final int DEFAULT_WINDOW_WIDTH = 800;
@@ -108,8 +106,8 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
     this.gblm = new GridBagLayoutManager(this.mainPanel);
 
-    this.leftPlayerList = new PlayerList(this.gameController.getPlayerList());
-    this.rightPlayerList = new PlayerList(this.gameController.getPlayerList());
+    this.leftPlayerList = new PlayerList(this.gameController.searchClassPathForPlayerList());
+    this.rightPlayerList = new PlayerList(this.gameController.searchClassPathForPlayerList());
     gblm.addComponent(new JScrollPane(this.leftPlayerList),0,0,1,1);
     gblm.addComponent(new JScrollPane(this.rightPlayerList),2,0,1,1);
 
@@ -372,5 +370,5 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     }
     table.setPreferredScrollableViewportSize(new Dimension(table.getPreferredScrollableViewportSize().width,height));
   }
-  
+
 }
