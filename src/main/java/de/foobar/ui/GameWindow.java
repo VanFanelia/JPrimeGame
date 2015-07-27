@@ -212,13 +212,8 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
   }
 
   private void generateCurrentFightPanel(GridBagLayoutManager gblm) {
-    this.currentFightPanel = new JPanel();
-    this.currentFightPanel.setLayout(new BorderLayout());
 
     this.initPlayers();
-
-    currentFightPanel.add(currentPlayerLeft,BorderLayout.LINE_START);
-    currentFightPanel.add(currentPlayerRight,BorderLayout.LINE_END);
 
     this.currentPlayerProgressBar = new JProgressBar();
     currentFightPanel.add(this.currentPlayerProgressBar,BorderLayout.SOUTH);
@@ -249,23 +244,23 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
    * @param player2 right player
    */
   public void setCurrentPlayersPlayers(IPlayer player1, IPlayer player2) {
-    this.currentPlayerLeft = new JLabel();
-    this.currentPlayerRight = new JLabel();
+    if (this.currentFightPanel == null) {
+      this.currentFightPanel = new JPanel();
+      this.currentFightPanel.setLayout(new BorderLayout());
 
-    if (player1 != null) {
-      currentPlayerLeft.setIcon(new ImageIcon(player1.getPlayerImage()));
-      currentPlayerLeft.setText(player1.getPlayerName());
-    } else {
-      currentPlayerLeft.setIcon(EMPTY_LEFT_PLAYER);
-      currentPlayerLeft.setText(UNKNOWN_PLAYER);
-    }
+      this.currentPlayerLeft = new JLabel(UNKNOWN_PLAYER, EMPTY_LEFT_PLAYER, SwingConstants.LEFT);
+      this.currentPlayerRight = new JLabel(UNKNOWN_PLAYER, EMPTY_RIGHT_PLAYER, SwingConstants.RIGHT);
 
-    if (player1 != null) {
-      currentPlayerRight.setIcon(new ImageIcon(player2.getPlayerImage()));
-      currentPlayerRight.setText(player2.getPlayerName());
+      this.currentFightPanel.add(this.currentPlayerLeft, BorderLayout.LINE_START);
+      this.currentFightPanel.add(this.currentPlayerRight, BorderLayout.LINE_END);
+
     } else {
-      currentPlayerRight.setIcon(EMPTY_RIGHT_PLAYER);
-      currentPlayerRight.setText(UNKNOWN_PLAYER);
+
+      this.currentPlayerLeft.setIcon(new ImageIcon(getScaledImage(player1.getPlayerImage())));
+      this.currentPlayerLeft.setText(player1.getPlayerName());
+
+      this.currentPlayerRight.setIcon(new ImageIcon(getScaledImage(player2.getPlayerImage())));
+      this.currentPlayerRight.setText(player2.getPlayerName());
     }
 
     currentPlayerRight.setHorizontalTextPosition(SwingConstants.LEFT);
