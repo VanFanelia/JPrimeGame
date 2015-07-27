@@ -63,9 +63,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
   private JPanel mainPanel;
 
-  private PlayerList leftPlayerList;
-
-  private PlayerList rightPlayerList;
+  private PlayerList playerList;
 
   private JPanel currentFightPanel;
   private JLabel currentPlayerLeft;
@@ -106,16 +104,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
     this.gblm = new GridBagLayoutManager(this.mainPanel);
 
-    this.leftPlayerList = new PlayerList(this.gameController.searchClassPathForPlayerList());
-    this.rightPlayerList = new PlayerList(this.gameController.searchClassPathForPlayerList());
-    gblm.addComponent(new JScrollPane(this.leftPlayerList),0,0,1,1);
-    gblm.addComponent(new JScrollPane(this.rightPlayerList),2,0,1,1);
-
-    JButton fightButton = new JButton("<html>vs.<br/> =- fight -=</html>");
-    fightButton.setVerticalTextPosition(SwingConstants.CENTER);
-    fightButton.setHorizontalTextPosition(SwingConstants.CENTER);
-    fightButton.addActionListener(new StartGameAction(gameController, leftPlayerList, rightPlayerList));
-    gblm.addComponent(fightButton, 1, 0, 1, 1);
+    generatePlayerSelectList();
 
     generateCurrentFightPanel(gblm);
 
@@ -130,6 +119,19 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     this.mainPanel.setSize(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
     this.setVisible(true);
     this.update(this.getGraphics());
+  }
+
+  private void generatePlayerSelectList() {
+
+    this.playerList = new PlayerList(this.gameController.searchClassPathForPlayerList());
+    gblm.addComponent(new JScrollPane(this.playerList),0,0,1,1);
+
+    JButton fightButton = new JButton("=- fight -=");
+    fightButton.setVerticalTextPosition(SwingConstants.CENTER);
+    fightButton.setHorizontalTextPosition(SwingConstants.CENTER);
+    fightButton.addActionListener(new StartGameAction(this.gameController, playerList));
+
+    gblm.addComponent(fightButton, 0, 1, 1, 1,0.3,0.3);
   }
 
   public GameController getGameController() {
@@ -174,7 +176,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     gameMenu.add(loadPlayer);
 
     JMenuItem startGame = new JMenuItem();
-    startGame.setAction(new StartGameAction(getGameController(),this.leftPlayerList, this.rightPlayerList));
+    startGame.setAction(new StartGameAction(getGameController(),this.playerList));
     gameMenu.add(startGame);
 
     JMenuItem stopResetGame = new JMenuItem("Stop / Reset Game");
@@ -206,7 +208,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
     this.resultTable.setRowHeight(RESULT_TABLE_ROW_HEIGHT);
 
-    gblm.addComponent(new JScrollPane(this.resultTable),0,3,4,1,2,2);
+    gblm.addComponent(new JScrollPane(this.resultTable),0,4,4,1,2,2);
   }
 
   private void generateCurrentFightPanel(GridBagLayoutManager gblm) {
@@ -222,7 +224,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     currentFightPanel.add(this.currentPlayerProgressBar,BorderLayout.SOUTH);
 
     currentFightPanel.setBorder(BorderFactory.createTitledBorder("Current Fight:"));
-    gblm.addComponent(currentFightPanel,0,1,3,1);
+    gblm.addComponent(currentFightPanel,0,2,3,1);
   }
 
   private void generateLastFightPanel() {
@@ -292,7 +294,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
       this.lastFightPanel = new JPanel();
       this.lastFightPanel.setLayout(new BorderLayout());
       this.lastFightPanel.setBorder(BorderFactory.createTitledBorder("Last Fight:"));
-      gblm.addComponent(lastFightPanel,0,2,3,1);
+      gblm.addComponent(lastFightPanel,0,3,3,1);
 
     }
 

@@ -3,12 +3,13 @@ package de.foobar.mechanic;
 import de.foobar.mechanic.player.IPlayer;
 import de.foobar.ui.GameWindow;
 
-import org.reflections.Reflections;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.reflections.Reflections;
 
 public class GameController {
 
@@ -34,32 +35,31 @@ public class GameController {
   }
 
   /**
-   * Start a game by adding to groups of players fighting agains each other.
-   * Every player from the first group will play against all persons from the 2. group exception against himself.
-   * The player from the first group always start a game, so this implementation allows two rounds between each player.
-   * @param group1 the first group
-   * @param group2 the second group
+   * Start a game by adding a group of players fighting agains each other exception against himself.
+   * @param playerList the list of players
    */
-  public void startGame(List<IPlayer> group1, List<IPlayer> group2) {
+  public void startGame(List<IPlayer> playerList) {
     System.out.println("Game Start:");
-    System.out.println(group1);
-    System.out.println(group2);
+    System.out.println(playerList);
 
     final Set<IPlayer> playedPlayers = new HashSet<>();
-    playedPlayers.addAll(group1);
-    playedPlayers.addAll(group2);
+    playedPlayers.addAll(playerList);
 
     // Init Result Table
     this.initResultTable(new ArrayList<>(playedPlayers));
 
     // Create Rounds
-    for (IPlayer player1 : group1) {
-      for (IPlayer player2 : group2) {
+    for (IPlayer player1 : playerList) {
+      for (IPlayer player2 : playerList) {
         if (player1 != player2) {
           this.rounds.add(new Round(player1, player2));
+          this.rounds.add(new Round(player2, player1));
         }
       }
     }
+
+    // shuffle games
+    Collections.shuffle(this.rounds);
 
     // start rounds:
     this.roundsPlayed = 0;

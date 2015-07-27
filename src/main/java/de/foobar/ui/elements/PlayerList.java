@@ -29,8 +29,15 @@ public class PlayerList extends JList<IPlayer> {
     this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
   }
 
+  /**
+   * Refresht the player list by converting the model "playerlist" to IPlayer array.
+   */
   public void refreshList() {
-    this.setListData((IPlayer[]) this.playerList.toArray());
+    IPlayer[] playerListArray = new IPlayer[this.playerList.size()];
+    for (int i = 0; i < this.playerList.size() ; i++) {
+      playerListArray[i] = this.playerList.get(i);
+    }
+    this.setListData(playerListArray);
   }
 
   @Override
