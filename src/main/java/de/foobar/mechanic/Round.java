@@ -35,6 +35,14 @@ public class Round {
     return scorePlayer2;
   }
 
+  public void setScorePlayer1(int scorePlayer1) {
+    this.scorePlayer1 = scorePlayer1;
+  }
+
+  public void setScorePlayer2(int scorePlayer2) {
+    this.scorePlayer2 = scorePlayer2;
+  }
+
   @Override
   public String toString() {
     return new ToStringBuilder(this)
@@ -43,5 +51,31 @@ public class Round {
         .append("scorePlayer1", scorePlayer1)
         .append("scorePlayer2", scorePlayer2)
         .toString();
+  }
+
+  /**
+   * get score of player.
+   * @param currentPlayer the player
+   * @return the score
+   */
+  public int getScoreOfPlayer(IPlayer currentPlayer) {
+    if ( this.player1 == currentPlayer) {
+      return this.getScorePlayer1();
+    }
+    return this.getScorePlayer2();
+  }
+
+  /**
+   * Add a score to the current score of a player.
+   * @param currentPlayer the player
+   * @param pickedNumber the score to add
+   */
+  public void addScore(IPlayer currentPlayer, int pickedNumber) {
+    if ( this.player1 == currentPlayer) {
+      this.setScorePlayer1(this.getScorePlayer1() + pickedNumber);
+    } else {
+      this.setScorePlayer2(this.getScorePlayer2() + pickedNumber);
+    }
+
   }
 }

@@ -11,8 +11,6 @@ public interface IPlayer {
 
   public BufferedImage getPlayerImage();
 
-  public void initNumbers(int[] numbers);
-
   public int pickNumber(int[] currentNumbers, int enemyScore, int yourScore);
 
 }

@@ -13,6 +13,8 @@ import org.reflections.Reflections;
 
 public class GameController {
 
+  private static final int DEFAULT_GAME_RANGE = 1000;
+
   public GameWindow gameWindow;
 
   private List<IPlayer> players = new ArrayList<>();
@@ -24,8 +26,6 @@ public class GameController {
   private int roundsPlayed = 0;
 
   private Round currentRound;
-
-  private Round lastRound;
 
   public GameController() {
   }
@@ -62,11 +62,18 @@ public class GameController {
     Collections.shuffle(this.rounds);
 
     // start rounds:
-    this.roundsPlayed = 0;
-    for (Round round: this.rounds) {
-      this.startRound(round);
-      // finished:
-      this.roundsPlayed++;
+    try {
+      this.roundsPlayed = 0;
+      for (Round round : this.rounds) {
+        this.startRound(round);
+
+        // finished:
+        this.results.addResult(round);
+        this.roundsPlayed++;
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+      System.err.println("Game abort by Interrupt error");
     }
   }
 
@@ -76,12 +83,60 @@ public class GameController {
     this.gameWindow.update(gameWindow.getGraphics());
   }
 
-  private void startRound(Round round) {
-    this.lastRound = this.currentRound;
+  private void startRound(Round round) throws InterruptedException {
+
+    Round lastRound = this.currentRound;
     this.currentRound = round;
     this.gameWindow.setCurrentPlayersPlayers(round.getPlayer1(), round.getPlayer2());
-    this.gameWindow.setLastRound(this.lastRound);
+    this.gameWindow.setLastRound(lastRound);
     this.gameWindow.setProgress(roundsPlayed, this.getRoundCount());
+    NumberComparator comparator = new NumberComparator();
+
+    // init numbers
+    List<Integer> numbers = new ArrayList<>();
+    for (int i = 1; i < DEFAULT_GAME_RANGE; i++ ) {
+      numbers.add(i);
+    }
+
+    // start playing against each other
+    boolean playerOneTurn = true;
+    while (!numbers.isEmpty()) {
+      IPlayer currentPlayer = playerOneTurn ? round.getPlayer1() : round.getPlayer2();
+      IPlayer opponent = playerOneTurn ? round.getPlayer2() : round.getPlayer1();
+
+      // start turn for player
+      int[] transfer = new int[numbers.size()];
+      numbers.sort(comparator);
+      for (int i = 0; i < numbers.size(); i++) {
+        transfer[i] = numbers.get(i);
+      }
+      // TODO set maximum time limit
+      int pickedNumber = currentPlayer.pickNumber(transfer, round.getScoreOfPlayer(currentPlayer), round.getScoreOfPlayer(opponent));
+      System.out.println(currentPlayer.getPlayerName() + " picked: " + pickedNumber);
+      Thread.sleep(1000);
+
+      giveNumberToPlayer(pickedNumber, currentPlayer, round);
+      List<Integer> primFactors = givePrimeToPlayer(pickedNumber, numbers, round, opponent);
+      numbers.remove(new Integer(pickedNumber)); //foce Object to remove value
+      numbers.removeAll(primFactors);
+
+
+      playerOneTurn = !playerOneTurn;
+    }
+
+  }
+
+  private List<Integer> givePrimeToPlayer(int pickedNumber, List<Integer> numbers, Round round, IPlayer opponent) {
+    List<Integer> primFactors = MathHelper.getPrimeFactors(pickedNumber, numbers);
+    for (Integer prime : primFactors) {
+      round.addScore(opponent, prime);
+    }
+    return primFactors;
+  }
+
+
+  private void giveNumberToPlayer(int pickedNumber, IPlayer currentPlayer, Round round) {
+    round.addScore(currentPlayer, pickedNumber);
   }
 
   public int getRoundCount() {

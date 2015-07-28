@@ -25,11 +25,6 @@ public class PaulPickLast implements IPlayer {
   }
 
   @Override
-  public void initNumbers(int[] numbers) {
-    //ignore, i am not interested in this.
-  }
-
-  @Override
   public int pickNumber(int[] currentNumbers, int enemyScore, int yourScore) {
     return currentNumbers[currentNumbers.length - 1];
   }

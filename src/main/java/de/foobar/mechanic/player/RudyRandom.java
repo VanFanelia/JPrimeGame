@@ -16,11 +16,6 @@ public class RudyRandom implements IPlayer {
   }
 
   @Override
-  public void initNumbers(int[] numbers) {
-    //ignore, i am the lucky guy
-  }
-
-  @Override
   public int pickNumber(int[] currentNumbers, int enemyScore, int yourScore) {
     return currentNumbers[((int) Math.floor(Math.random() * currentNumbers.length))];
   }
