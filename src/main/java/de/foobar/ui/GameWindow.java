@@ -76,13 +76,16 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
   private JButton fightButton;
 
-  private JProgressBar currentPlayerProgressBar;
+  private JProgressBar currentRoundProgressBar;
+  private JProgressBar currentGameProgressBar;
 
   private JTable resultTable;
 
   private PlayerResultTableModel tableModel;
 
   private GridBagLayoutManager gblm;
+
+  private GridBagLayoutManager currentFightPanelGBLM;
 
   /**
    * Default Constructor to init the game window.
@@ -218,8 +221,11 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
     this.initPlayers();
 
-    this.currentPlayerProgressBar = new JProgressBar();
-    currentFightPanel.add(this.currentPlayerProgressBar,BorderLayout.SOUTH);
+    this.currentRoundProgressBar = new JProgressBar();
+    this.currentGameProgressBar = new JProgressBar();
+    currentFightPanelGBLM.addComponent(new JLabel("Fight / Round: "), 0, 1, 2, 1);
+    currentFightPanelGBLM.addComponent(this.currentRoundProgressBar, 0, 2, 2, 1);
+    currentFightPanelGBLM.addComponent(this.currentGameProgressBar, 0, 3, 2, 1);
 
     currentFightPanel.setBorder(BorderFactory.createTitledBorder("Current Fight:"));
     gblm.addComponent(currentFightPanel,0,2,3,1);
@@ -249,13 +255,14 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
   public void setCurrentPlayersPlayers(IPlayer player1, IPlayer player2) {
     if (this.currentFightPanel == null) {
       this.currentFightPanel = new JPanel();
-      this.currentFightPanel.setLayout(new BorderLayout());
+      this.currentFightPanelGBLM = new GridBagLayoutManager(this.currentFightPanel);
+      this.currentFightPanel.setLayout(this.currentFightPanelGBLM);
 
       this.currentPlayerLeft = new JLabel(UNKNOWN_PLAYER, EMPTY_LEFT_PLAYER, SwingConstants.LEFT);
       this.currentPlayerRight = new JLabel(UNKNOWN_PLAYER, EMPTY_RIGHT_PLAYER, SwingConstants.RIGHT);
 
-      this.currentFightPanel.add(this.currentPlayerLeft, BorderLayout.LINE_START);
-      this.currentFightPanel.add(this.currentPlayerRight, BorderLayout.LINE_END);
+      this.currentFightPanelGBLM.addComponent(this.currentPlayerLeft, 0,0,1,1);
+      this.currentFightPanelGBLM.addComponent(this.currentPlayerRight, 1, 0, 1, 1);
 
     } else {
 
@@ -374,7 +381,9 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     table.setPreferredScrollableViewportSize(new Dimension(table.getPreferredScrollableViewportSize().width,height));
   }
 
-  public void initProgressBar(DefaultBoundedRangeModel progressBarModel) {
-    this.currentPlayerProgressBar.setModel(progressBarModel);
+  public void initProgressBar(DefaultBoundedRangeModel progressRound, DefaultBoundedRangeModel progressGame) {
+    this.currentRoundProgressBar.setModel(progressRound);
+    this.currentGameProgressBar.setModel(progressGame);
   }
+
 }

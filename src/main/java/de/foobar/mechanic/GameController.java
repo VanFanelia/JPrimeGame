@@ -29,7 +29,8 @@ public class GameController {
 
   private Boolean gameRunning = false;
 
-  private DefaultBoundedRangeModel progressBarModel;
+  private DefaultBoundedRangeModel progressBarRoundModel;
+  private DefaultBoundedRangeModel progressBarGameModel;
 
   public GameController() {
   }
@@ -54,8 +55,11 @@ public class GameController {
 
     // Init Result Table
     this.initResultTable(new ArrayList<>(playedPlayers));
-    this.progressBarModel = new DefaultBoundedRangeModel();
-    this.gameWindow.initProgressBar(this.progressBarModel);
+    this.progressBarRoundModel = new DefaultBoundedRangeModel();
+    this.progressBarGameModel = new DefaultBoundedRangeModel();
+    this.gameWindow.initProgressBar(this.progressBarRoundModel, this.progressBarGameModel);
+
+
 
     // Create Rounds
     for (IPlayer player1 : playerList) {
@@ -74,7 +78,6 @@ public class GameController {
     GameWorker worker = new GameWorker(this);
     worker.execute();
 
-
   }
 
   private void initResultTable(List<IPlayer> playedPlayers) {
@@ -88,12 +91,15 @@ public class GameController {
    */
   public void startGame() {
     this.roundsPlayed = 0;
+    this.progressBarGameModel.setValue(this.roundsPlayed);
+    this.progressBarGameModel.setMaximum(this.rounds.size());
     for (Round round : this.rounds) {
       this.startRound(round);
 
       // finished:
       this.results.addResult(round);
       this.roundsPlayed++;
+      this.progressBarGameModel.setValue(this.roundsPlayed);
     }
 
   }
@@ -114,7 +120,7 @@ public class GameController {
 
     // start playing against each other
     boolean playerOneTurn = true;
-    this.progressBarModel.setMaximum(DEFAULT_GAME_RANGE);
+    this.progressBarRoundModel.setMaximum(DEFAULT_GAME_RANGE);
     while (!numbers.isEmpty()) {
       IPlayer currentPlayer = playerOneTurn ? round.getPlayer1() : round.getPlayer2();
       IPlayer opponent = playerOneTurn ? round.getPlayer2() : round.getPlayer1();
@@ -131,7 +137,7 @@ public class GameController {
 
       // sleep to refresh the ui
       try {
-        Thread.sleep(1000);
+        Thread.sleep(100);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
@@ -144,8 +150,7 @@ public class GameController {
       playerOneTurn = !playerOneTurn;
 
       // setProgressBar
-      this.progressBarModel.setValue(this.progressBarModel.getMaximum() - numbers.size());
-      System.out.println(this.progressBarModel.getValue() + " : " + this.progressBarModel.getMaximum());
+      this.progressBarRoundModel.setValue(this.progressBarRoundModel.getMaximum() - numbers.size());
     }
 
   }
