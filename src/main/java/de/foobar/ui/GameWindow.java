@@ -1,7 +1,5 @@
 package de.foobar.ui;
 
-import static de.foobar.ui.helper.ImageSizeHelper.getScaledImage;
-
 import de.foobar.mechanic.GameController;
 import de.foobar.mechanic.ResultMap;
 import de.foobar.mechanic.Round;
@@ -13,8 +11,9 @@ import de.foobar.ui.actions.LoadPlayerAction;
 import de.foobar.ui.actions.StartGameAction;
 import de.foobar.ui.elements.PlayerList;
 import de.foobar.ui.elements.PlayerResultTableModel;
+import static de.foobar.ui.helper.ImageSizeHelper.getScaledImage;
 import de.foobar.ui.layout.GridBagLayoutManager;
-
+import de.foobar.ui.listener.GameSpeedChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -23,7 +22,6 @@ import java.awt.Graphics;
 import java.awt.HeadlessException;
 import java.util.ArrayList;
 import javax.accessibility.Accessible;
-
 import javax.swing.BorderFactory;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.ImageIcon;
@@ -36,6 +34,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.RootPaneContainer;
 import javax.swing.SwingConstants;
@@ -226,6 +225,13 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     currentFightPanelGBLM.addComponent(new JLabel("Fight / Round: "), 0, 1, 2, 1);
     currentFightPanelGBLM.addComponent(this.currentRoundProgressBar, 0, 2, 2, 1);
     currentFightPanelGBLM.addComponent(this.currentGameProgressBar, 0, 3, 2, 1);
+
+    JSlider speedSlider = new JSlider( 0, 1000, 500 );
+    speedSlider.setPaintTicks( true );
+    speedSlider.setMinorTickSpacing(20);
+    speedSlider.setMajorTickSpacing(100);
+    speedSlider.addChangeListener(new GameSpeedChangeListener(this.gameController));
+    currentFightPanelGBLM.addComponent(speedSlider, 0, 4, 2, 1);
 
     currentFightPanel.setBorder(BorderFactory.createTitledBorder("Current Fight:"));
     gblm.addComponent(currentFightPanel,0,2,3,1);

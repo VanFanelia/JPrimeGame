@@ -32,6 +32,8 @@ public class GameController {
   private DefaultBoundedRangeModel progressBarRoundModel;
   private DefaultBoundedRangeModel progressBarGameModel;
 
+  public int millisecondsDelayForPick = 500;
+
   public GameController() {
   }
 
@@ -137,7 +139,7 @@ public class GameController {
 
       // sleep to refresh the ui
       try {
-        Thread.sleep(100);
+        Thread.sleep(this.millisecondsDelayForPick);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
@@ -200,5 +202,7 @@ public class GameController {
     return this.players;
   }
 
-
+  public void setGameSpeed(int milliseconds) {
+    this.millisecondsDelayForPick = milliseconds;
+  }
 }
