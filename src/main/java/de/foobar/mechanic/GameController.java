@@ -1,19 +1,19 @@
 package de.foobar.mechanic;
 
 import de.foobar.mechanic.player.IPlayer;
+import de.foobar.mechanic.runable.GameWorker;
 import de.foobar.ui.GameWindow;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import javax.swing.DefaultBoundedRangeModel;
 import org.reflections.Reflections;
 
 public class GameController {
 
-  private static final int DEFAULT_GAME_RANGE = 1000;
+  public static final int DEFAULT_GAME_RANGE = 1000;
 
   public GameWindow gameWindow;
 
@@ -26,6 +26,10 @@ public class GameController {
   private int roundsPlayed = 0;
 
   private Round currentRound;
+
+  private Boolean gameRunning = false;
+
+  private DefaultBoundedRangeModel progressBarModel;
 
   public GameController() {
   }
@@ -42,11 +46,16 @@ public class GameController {
     System.out.println("Game Start:");
     System.out.println(playerList);
 
+    this.gameRunning = true;
+    this.gameWindow.deactivateStartGame();
+
     final Set<IPlayer> playedPlayers = new HashSet<>();
     playedPlayers.addAll(playerList);
 
     // Init Result Table
     this.initResultTable(new ArrayList<>(playedPlayers));
+    this.progressBarModel = new DefaultBoundedRangeModel();
+    this.gameWindow.initProgressBar(this.progressBarModel);
 
     // Create Rounds
     for (IPlayer player1 : playerList) {
@@ -62,19 +71,10 @@ public class GameController {
     Collections.shuffle(this.rounds);
 
     // start rounds:
-    try {
-      this.roundsPlayed = 0;
-      for (Round round : this.rounds) {
-        this.startRound(round);
+    GameWorker worker = new GameWorker(this);
+    worker.execute();
 
-        // finished:
-        this.results.addResult(round);
-        this.roundsPlayed++;
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-      System.err.println("Game abort by Interrupt error");
-    }
+
   }
 
   private void initResultTable(List<IPlayer> playedPlayers) {
@@ -83,13 +83,27 @@ public class GameController {
     this.gameWindow.update(gameWindow.getGraphics());
   }
 
-  private void startRound(Round round) throws InterruptedException {
+  /**
+   * start a game.
+   */
+  public void startGame() {
+    this.roundsPlayed = 0;
+    for (Round round : this.rounds) {
+      this.startRound(round);
+
+      // finished:
+      this.results.addResult(round);
+      this.roundsPlayed++;
+    }
+
+  }
+
+  private void startRound(Round round) {
 
     Round lastRound = this.currentRound;
     this.currentRound = round;
     this.gameWindow.setCurrentPlayersPlayers(round.getPlayer1(), round.getPlayer2());
     this.gameWindow.setLastRound(lastRound);
-    this.gameWindow.setProgress(roundsPlayed, this.getRoundCount());
     NumberComparator comparator = new NumberComparator();
 
     // init numbers
@@ -100,6 +114,7 @@ public class GameController {
 
     // start playing against each other
     boolean playerOneTurn = true;
+    this.progressBarModel.setMaximum(DEFAULT_GAME_RANGE);
     while (!numbers.isEmpty()) {
       IPlayer currentPlayer = playerOneTurn ? round.getPlayer1() : round.getPlayer2();
       IPlayer opponent = playerOneTurn ? round.getPlayer2() : round.getPlayer1();
@@ -113,15 +128,24 @@ public class GameController {
       // TODO set maximum time limit
       int pickedNumber = currentPlayer.pickNumber(transfer, round.getScoreOfPlayer(currentPlayer), round.getScoreOfPlayer(opponent));
       System.out.println(currentPlayer.getPlayerName() + " picked: " + pickedNumber);
-      Thread.sleep(1000);
+
+      // sleep to refresh the ui
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
 
       giveNumberToPlayer(pickedNumber, currentPlayer, round);
       List<Integer> primFactors = givePrimeToPlayer(pickedNumber, numbers, round, opponent);
-      numbers.remove(new Integer(pickedNumber)); //foce Object to remove value
+      numbers.remove(new Integer(pickedNumber)); //force Object to remove value
       numbers.removeAll(primFactors);
 
-
       playerOneTurn = !playerOneTurn;
+
+      // setProgressBar
+      this.progressBarModel.setValue(this.progressBarModel.getMaximum() - numbers.size());
+      System.out.println(this.progressBarModel.getValue() + " : " + this.progressBarModel.getMaximum());
     }
 
   }
@@ -138,6 +162,12 @@ public class GameController {
   private void giveNumberToPlayer(int pickedNumber, IPlayer currentPlayer, Round round) {
     round.addScore(currentPlayer, pickedNumber);
   }
+
+
+  public void gameFinished() {
+    this.gameWindow.activateStartGame();
+  }
+
 
   public int getRoundCount() {
     return this.rounds.size();

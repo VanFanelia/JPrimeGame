@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import javax.accessibility.Accessible;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -72,6 +73,8 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
   private JPanel lastFightPanel;
   private JLabel lastPlayerLeft;
   private JLabel lastPlayerRight;
+
+  private JButton fightButton;
 
   private JProgressBar currentPlayerProgressBar;
 
@@ -126,7 +129,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     this.playerList = new PlayerList(this.gameController.searchClassPathForPlayerList());
     gblm.addComponent(new JScrollPane(this.playerList),0,0,1,1);
 
-    JButton fightButton = new JButton("=- fight -=");
+    this.fightButton = new JButton("=- fight -=");
     fightButton.setVerticalTextPosition(SwingConstants.CENTER);
     fightButton.setHorizontalTextPosition(SwingConstants.CENTER);
     fightButton.addActionListener(new StartGameAction(this.gameController, playerList));
@@ -331,9 +334,12 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     label.setFont(boldFont);
   }
 
-  public void setProgress(int roundsPlayed, int maxRounds) {
-    this.currentPlayerProgressBar.setMaximum(maxRounds);
-    this.currentPlayerProgressBar.setValue(roundsPlayed);
+  public void deactivateStartGame() {
+    this.fightButton.setEnabled(false);
+  }
+
+  public void activateStartGame() {
+    this.fightButton.setEnabled(true);
   }
 
   //===================================================
@@ -368,4 +374,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     table.setPreferredScrollableViewportSize(new Dimension(table.getPreferredScrollableViewportSize().width,height));
   }
 
+  public void initProgressBar(DefaultBoundedRangeModel progressBarModel) {
+    this.currentPlayerProgressBar.setModel(progressBarModel);
+  }
 }
