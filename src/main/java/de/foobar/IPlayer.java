@@ -1,4 +1,4 @@
-package de.foobar.mechanic.player;
+package de.foobar;
 
 import java.awt.image.BufferedImage;
 

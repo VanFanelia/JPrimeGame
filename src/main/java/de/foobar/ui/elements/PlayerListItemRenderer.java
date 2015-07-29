@@ -2,7 +2,7 @@ package de.foobar.ui.elements;
 
 import static de.foobar.ui.helper.ImageSizeHelper.getScaledImage;
 
-import de.foobar.mechanic.player.IPlayer;
+import de.foobar.IPlayer;
 
 import java.awt.Color;
 import java.awt.Component;

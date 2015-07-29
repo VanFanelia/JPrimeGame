@@ -1,6 +1,6 @@
 package de.foobar.mechanic;
 
-import de.foobar.mechanic.player.IPlayer;
+import de.foobar.IPlayer;
 import de.foobar.mechanic.runable.GameWorker;
 import de.foobar.ui.GameWindow;
 import java.util.ArrayList;

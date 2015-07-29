@@ -1,6 +1,6 @@
 package de.foobar.mechanic;
 
-import de.foobar.mechanic.player.IPlayer;
+import de.foobar.IPlayer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

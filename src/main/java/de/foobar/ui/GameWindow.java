@@ -3,7 +3,7 @@ package de.foobar.ui;
 import de.foobar.mechanic.GameController;
 import de.foobar.mechanic.ResultMap;
 import de.foobar.mechanic.Round;
-import de.foobar.mechanic.player.IPlayer;
+import de.foobar.IPlayer;
 import de.foobar.ui.actions.CloseAction;
 import de.foobar.ui.actions.GameRuleAction;
 import de.foobar.ui.actions.HelpAction;

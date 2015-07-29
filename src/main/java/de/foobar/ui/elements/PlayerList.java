@@ -1,6 +1,6 @@
 package de.foobar.ui.elements;
 
-import de.foobar.mechanic.player.IPlayer;
+import de.foobar.IPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
