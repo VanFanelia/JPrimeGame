@@ -16,7 +16,7 @@ public class MathHelperTest {
     List<Integer> numbers = new ArrayList<Integer>();
     numbers.add(2);
     numbers.add(1);
-    List<Integer> result = MathHelper.getPrimeFactors(2, numbers);
+    List<Integer> result = MathHelper.getDivisors(2, numbers);
     assertThat(result.size(), equalTo(1));
     assertThat(result, hasItem(1));
   }
@@ -26,7 +26,7 @@ public class MathHelperTest {
 
     List<Integer> numbers = new ArrayList<Integer>();
     numbers.add(1);
-    List<Integer> result = MathHelper.getPrimeFactors(1, numbers);
+    List<Integer> result = MathHelper.getDivisors(1, numbers);
     assertThat(result.size(), equalTo(0));
   }
 
@@ -36,7 +36,7 @@ public class MathHelperTest {
 
     int[] numbers = new int[]{1, 2, 3, 4, 5, 6};
 
-    List<Integer> result = MathHelper.getPrimeFactors(6, MathHelper.convertIntArrayToList(numbers));
+    List<Integer> result = MathHelper.getDivisors(6, MathHelper.convertIntArrayToList(numbers));
     assertThat(result.size(), equalTo(3));
     assertThat(result, hasItem(1));
     assertThat(result, hasItem(2));

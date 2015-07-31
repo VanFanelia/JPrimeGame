@@ -11,7 +11,7 @@ public class MathHelper {
    * @param numbers a list of numbers which filters the prime factors
    * @return a list of prime factors.
    */
-  public static List<Integer> getPrimeFactors(int pickedNumber, List<Integer> numbers) {
+  public static List<Integer> getDivisors(int pickedNumber, List<Integer> numbers) {
 
     List<Integer> result = new ArrayList<>();
 

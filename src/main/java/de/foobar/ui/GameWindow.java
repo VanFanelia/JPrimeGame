@@ -15,6 +15,7 @@ import static de.foobar.ui.helper.ImageSizeHelper.getScaledImage;
 import de.foobar.ui.layout.GridBagLayoutManager;
 import de.foobar.ui.listener.GameSpeedChangeListener;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -231,10 +232,10 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     currentFightPanelGBLM.addComponent(this.currentRoundProgressBar, 0, 2, 2, 1);
     currentFightPanelGBLM.addComponent(this.currentGameProgressBar, 0, 3, 2, 1);
 
-    JSlider speedSlider = new JSlider( 0, 1000, 500 );
+    JSlider speedSlider = new JSlider( 0, 2000, 1000 );
     speedSlider.setPaintTicks( true );
-    speedSlider.setMinorTickSpacing(20);
-    speedSlider.setMajorTickSpacing(100);
+    speedSlider.setMinorTickSpacing(50);
+    speedSlider.setMajorTickSpacing(250);
     speedSlider.addChangeListener(new GameSpeedChangeListener(this.gameController));
     currentFightPanelGBLM.addComponent(speedSlider, 0, 4, 2, 1);
 
@@ -326,6 +327,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
       setLabelsBoldValue(setBold, true);
       setLabelsBoldValue(removeBold, false);
+
     } else {
       lastPlayerLeft.setIcon(EMPTY_LEFT_PLAYER);
       lastPlayerRight.setIcon(EMPTY_RIGHT_PLAYER);
@@ -345,11 +347,20 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     Font font = label.getFont();
     Font boldFont;
     if (setBold) {
-      boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
+      boldFont = new Font(font.getFontName(), Font.BOLD, 12 );
     } else {
-      boldFont = new Font(font.getFontName(), Font.PLAIN, font.getSize());
+      boldFont = new Font(font.getFontName(), Font.PLAIN, 12 );
     }
     label.setFont(boldFont);
+  }
+
+  private static void setLabelToCurrentPlayerColor(JLabel label, boolean setCurrent) {
+
+    if (setCurrent) {
+      label.setForeground(new Color(0,90,0));
+    } else {
+      label.setForeground(Color.BLACK);
+    }
   }
 
   public void deactivateStartGame() {
@@ -396,5 +407,34 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     this.currentRoundProgressBar.setModel(progressRound);
     this.currentGameProgressBar.setModel(progressGame);
   }
+
+  public void setCurrentPlayerPoints(int pickedNumber, List<Integer> divisors, Round round, IPlayer currentPlayer) {
+
+
+    int sumOfDivisors = divisors.stream().mapToInt((x) -> x).sum();
+
+    boolean currentPlayerIsPlayer1 = currentPlayer.equals(round.getPlayer1());
+
+    setLabelsBoldValue(this.currentPlayerLeft, currentPlayerIsPlayer1);
+    setLabelsBoldValue(this.currentPlayerRight, !currentPlayerIsPlayer1);
+
+    String pickedTextLeft = currentPlayerIsPlayer1 ? " picked: " + pickedNumber : " get: " + sumOfDivisors;
+    String pickedTextRight = !currentPlayerIsPlayer1 ? " picked: " + pickedNumber : " get: " + sumOfDivisors;
+
+    setLabelToCurrentPlayerColor(this.currentPlayerLeft, currentPlayerIsPlayer1);
+    setLabelToCurrentPlayerColor(this.currentPlayerRight, !currentPlayerIsPlayer1);
+
+
+    String leftPlayerTextToSet = "<html>" + round.getPlayer1().getPlayerName() + "<br/>"
+        + "points: " + round.getScorePlayer1() + "<br />" + pickedTextLeft + " </html>";
+    this.currentPlayerLeft.setText(leftPlayerTextToSet);
+
+    String rightPlayerTextToSet = "<html>" + round.getPlayer2().getPlayerName() + "<br/>"
+        + "points: " + round.getScorePlayer2() + "<br />" + pickedTextRight + " </html>";
+    this.currentPlayerRight.setText(rightPlayerTextToSet);
+
+
+  }
+
 
 }

@@ -141,7 +141,6 @@ public class GameController {
       }
       // TODO set maximum time limit
       int pickedNumber = currentPlayer.pickNumber(transfer, round.getScoreOfPlayer(currentPlayer), round.getScoreOfPlayer(opponent));
-      System.out.println(currentPlayer.getPlayerName() + " picked: " + pickedNumber);
 
       // sleep to refresh the ui
       try {
@@ -151,20 +150,25 @@ public class GameController {
       }
 
       giveNumberToPlayer(pickedNumber, currentPlayer, round);
-      List<Integer> primFactors = givePrimeToPlayer(pickedNumber, numbers, round, opponent);
+      List<Integer> divisors = giveDivisorsToPlayer(pickedNumber, numbers, round, opponent);
       numbers.remove(new Integer(pickedNumber)); //force Object to remove value
-      numbers.removeAll(primFactors);
+      numbers.removeAll(divisors);
+
+      System.out.println(currentPlayer.getPlayerName() + " picked: " + pickedNumber + " enemy get: " + divisors);
 
       playerOneTurn = !playerOneTurn;
 
       // setProgressBar
       this.progressBarRoundModel.setValue(this.progressBarRoundModel.getMaximum() - numbers.size());
+
+      // set points and picked:
+      this.gameWindow.setCurrentPlayerPoints(pickedNumber, divisors, round, currentPlayer);
     }
 
   }
 
-  private List<Integer> givePrimeToPlayer(int pickedNumber, List<Integer> numbers, Round round, IPlayer opponent) {
-    List<Integer> primFactors = MathHelper.getPrimeFactors(pickedNumber, numbers);
+  private List<Integer> giveDivisorsToPlayer(int pickedNumber, List<Integer> numbers, Round round, IPlayer opponent) {
+    List<Integer> primFactors = MathHelper.getDivisors(pickedNumber, numbers);
     for (Integer prime : primFactors) {
       round.addScore(opponent, prime);
     }
