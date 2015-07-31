@@ -1,5 +1,7 @@
 package de.foobar.ui;
 
+import static de.foobar.ui.helper.ImageSizeHelper.getScaledImage;
+
 import de.foobar.IPlayer;
 import de.foobar.mechanic.GameController;
 import de.foobar.mechanic.ResultMap;
@@ -11,9 +13,10 @@ import de.foobar.ui.actions.LoadPlayerAction;
 import de.foobar.ui.actions.StartGameAction;
 import de.foobar.ui.elements.PlayerList;
 import de.foobar.ui.elements.PlayerResultTableModel;
-import static de.foobar.ui.helper.ImageSizeHelper.getScaledImage;
+
 import de.foobar.ui.layout.GridBagLayoutManager;
 import de.foobar.ui.listener.GameSpeedChangeListener;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -85,8 +88,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
   private PlayerResultTableModel tableModel;
 
   private GridBagLayoutManager gblm;
-
-  private GridBagLayoutManager currentFightPanelGBLM;
+  private GridBagLayoutManager currentFightPanelGblm;
 
   /**
    * Default Constructor to init the game window.
@@ -212,7 +214,8 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     this.resultTable.setModel(new PlayerResultTableModel(new ResultMap(new ArrayList<>())));
     this.resultTable.setFillsViewportHeight(true);
     this.resultTable.setPreferredScrollableViewportSize(new Dimension(
-    this.resultTable.getPreferredScrollableViewportSize().width,DEFAULT_TABLE_HEIGHT));
+        this.resultTable.getPreferredScrollableViewportSize().width,DEFAULT_TABLE_HEIGHT)
+    );
 
     this.tableModel = new PlayerResultTableModel();
     this.resultTable.setModel(this.tableModel);
@@ -228,16 +231,16 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
     this.currentRoundProgressBar = new JProgressBar();
     this.currentGameProgressBar = new JProgressBar();
-    currentFightPanelGBLM.addComponent(new JLabel("Fight / Round: "), 0, 1, 2, 1);
-    currentFightPanelGBLM.addComponent(this.currentRoundProgressBar, 0, 2, 2, 1);
-    currentFightPanelGBLM.addComponent(this.currentGameProgressBar, 0, 3, 2, 1);
+    currentFightPanelGblm.addComponent(new JLabel("Fight / Round: "), 0, 1, 2, 1);
+    currentFightPanelGblm.addComponent(this.currentRoundProgressBar, 0, 2, 2, 1);
+    currentFightPanelGblm.addComponent(this.currentGameProgressBar, 0, 3, 2, 1);
 
     JSlider speedSlider = new JSlider( 0, 2000, 1000 );
     speedSlider.setPaintTicks( true );
     speedSlider.setMinorTickSpacing(50);
     speedSlider.setMajorTickSpacing(250);
     speedSlider.addChangeListener(new GameSpeedChangeListener(this.gameController));
-    currentFightPanelGBLM.addComponent(speedSlider, 0, 4, 2, 1);
+    currentFightPanelGblm.addComponent(speedSlider, 0, 4, 2, 1);
 
     currentFightPanel.setBorder(BorderFactory.createTitledBorder("Current Fight:"));
     gblm.addComponent(currentFightPanel,0,2,3,1);
@@ -267,14 +270,14 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
   public void setCurrentPlayersPlayers(IPlayer player1, IPlayer player2) {
     if (this.currentFightPanel == null) {
       this.currentFightPanel = new JPanel();
-      this.currentFightPanelGBLM = new GridBagLayoutManager(this.currentFightPanel);
-      this.currentFightPanel.setLayout(this.currentFightPanelGBLM);
+      this.currentFightPanelGblm = new GridBagLayoutManager(this.currentFightPanel);
+      this.currentFightPanel.setLayout(this.currentFightPanelGblm);
 
       this.currentPlayerLeft = new JLabel(UNKNOWN_PLAYER, EMPTY_LEFT_PLAYER, SwingConstants.LEFT);
       this.currentPlayerRight = new JLabel(UNKNOWN_PLAYER, EMPTY_RIGHT_PLAYER, SwingConstants.RIGHT);
 
-      this.currentFightPanelGBLM.addComponent(this.currentPlayerLeft, 0,0,1,1);
-      this.currentFightPanelGBLM.addComponent(this.currentPlayerRight, 1, 0, 1, 1);
+      this.currentFightPanelGblm.addComponent(this.currentPlayerLeft, 0,0,1,1);
+      this.currentFightPanelGblm.addComponent(this.currentPlayerRight, 1, 0, 1, 1);
 
     } else {
 
@@ -408,10 +411,17 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     this.currentGameProgressBar.setModel(progressGame);
   }
 
+  /**
+   * sets the current player points in ui.
+   * @param pickedNumber picked number
+   * @param divisors the numbers for the enemy
+   * @param round current round
+   * @param currentPlayer the current player
+   */
   public void setCurrentPlayerPoints(int pickedNumber, List<Integer> divisors, Round round, IPlayer currentPlayer) {
 
 
-    int sumOfDivisors = divisors.stream().mapToInt((x) -> x).sum();
+    int sumOfDivisors = divisors.stream().mapToInt( ( number ) -> number).sum();
 
     boolean currentPlayerIsPlayer1 = currentPlayer.equals(round.getPlayer1());
 
@@ -419,7 +429,6 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     setLabelsBoldValue(this.currentPlayerRight, !currentPlayerIsPlayer1);
 
     String pickedTextLeft = currentPlayerIsPlayer1 ? " picked: " + pickedNumber : " get: " + sumOfDivisors;
-    String pickedTextRight = !currentPlayerIsPlayer1 ? " picked: " + pickedNumber : " get: " + sumOfDivisors;
 
     setLabelToCurrentPlayerColor(this.currentPlayerLeft, currentPlayerIsPlayer1);
     setLabelToCurrentPlayerColor(this.currentPlayerRight, !currentPlayerIsPlayer1);
@@ -428,6 +437,8 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     String leftPlayerTextToSet = "<html>" + round.getPlayer1().getPlayerName() + "<br/>"
         + "points: " + round.getScorePlayer1() + "<br />" + pickedTextLeft + " </html>";
     this.currentPlayerLeft.setText(leftPlayerTextToSet);
+
+    String pickedTextRight = ! currentPlayerIsPlayer1 ? " picked: " + pickedNumber : " get: " + sumOfDivisors;
 
     String rightPlayerTextToSet = "<html>" + round.getPlayer2().getPlayerName() + "<br/>"
         + "points: " + round.getScorePlayer2() + "<br />" + pickedTextRight + " </html>";

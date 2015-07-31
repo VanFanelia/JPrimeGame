@@ -1,6 +1,7 @@
 package de.foobar.mechanic.runable;
 
 import de.foobar.mechanic.GameController;
+
 import javax.swing.SwingWorker;
 
 public class GameWorker extends SwingWorker<Boolean, Boolean> {
@@ -17,7 +18,7 @@ public class GameWorker extends SwingWorker<Boolean, Boolean> {
 
   @Override
   protected Boolean doInBackground() throws Exception {
-    gameController.startGame();
+    gameController.startGameInBackground();
     return true;
   }
 

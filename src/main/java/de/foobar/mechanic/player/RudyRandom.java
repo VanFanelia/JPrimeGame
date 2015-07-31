@@ -1,6 +1,7 @@
 package de.foobar.mechanic.player;
 
 import de.foobar.IPlayer;
+
 import java.awt.image.BufferedImage;
 
 @SuppressWarnings("unused")

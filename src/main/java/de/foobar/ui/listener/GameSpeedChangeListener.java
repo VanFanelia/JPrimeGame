@@ -1,6 +1,7 @@
 package de.foobar.ui.listener;
 
 import de.foobar.mechanic.GameController;
+
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;

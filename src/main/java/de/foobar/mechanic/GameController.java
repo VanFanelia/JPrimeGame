@@ -3,6 +3,11 @@ package de.foobar.mechanic;
 import de.foobar.IPlayer;
 import de.foobar.mechanic.runable.GameWorker;
 import de.foobar.ui.GameWindow;
+
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ConfigurationBuilder;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,9 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.DefaultBoundedRangeModel;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ConfigurationBuilder;
 
 public class GameController {
 
@@ -45,6 +47,26 @@ public class GameController {
 
   public void setGameWindow(GameWindow gameWindow) {
     this.gameWindow = gameWindow;
+  }
+
+  /**
+   * start a game in background.
+   */
+  public void startGameInBackground() {
+    this.roundsPlayed = 0;
+
+    this.progressBarGameModel.setValue(this.roundsPlayed);
+    this.progressBarGameModel.setMaximum(this.rounds.size());
+
+    for (Round round : this.rounds) {
+      this.startRound(round);
+
+      // finished:
+      this.results.addResult(round);
+      this.roundsPlayed++;
+      this.progressBarGameModel.setValue(this.roundsPlayed);
+      this.updateResultTable();
+    }
   }
 
   /**
@@ -101,24 +123,6 @@ public class GameController {
     this.gameWindow.update(gameWindow.getGraphics());
   }
 
-  /**
-   * start a game.
-   */
-  public void startGame() {
-    this.roundsPlayed = 0;
-    this.progressBarGameModel.setValue(this.roundsPlayed);
-    this.progressBarGameModel.setMaximum(this.rounds.size());
-    for (Round round : this.rounds) {
-      this.startRound(round);
-
-      // finished:
-      this.results.addResult(round);
-      this.roundsPlayed++;
-      this.progressBarGameModel.setValue(this.roundsPlayed);
-      this.updateResultTable();
-    }
-
-  }
 
   private void startRound(Round round) {
 
@@ -188,7 +192,9 @@ public class GameController {
     round.addScore(currentPlayer, pickedNumber);
   }
 
-
+  /**
+   * Called when a game is finshed. Reset progress bars.
+   */
   public void gameFinished() {
     this.gameWindow.activateStartGame();
     this.progressBarGameModel.setMaximum(1);

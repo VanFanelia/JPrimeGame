@@ -2,6 +2,7 @@ package de.foobar.ui.actions;
 
 import de.foobar.mechanic.GameController;
 import de.foobar.ui.helper.ClassFileFilter;
+
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -18,6 +19,10 @@ public class LoadPlayerAction extends AbstractAction {
 
   private GameController gameController;
 
+  /**
+   * default constructor.
+   * @param gameController the game controller
+   */
   public LoadPlayerAction(GameController gameController) {
     this.gameController = gameController;
     putValue( Action.NAME, "Load Player" );
