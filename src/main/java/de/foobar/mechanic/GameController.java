@@ -67,6 +67,7 @@ public class GameController {
     this.progressBarGameModel = new DefaultBoundedRangeModel();
     this.gameWindow.initProgressBar(this.progressBarRoundModel, this.progressBarGameModel);
 
+    this.rounds = new ArrayList<>();
 
 
     // Create Rounds
@@ -74,7 +75,6 @@ public class GameController {
       for (IPlayer player2 : playerList) {
         if (player1 != player2) {
           this.rounds.add(new Round(player1, player2));
-          this.rounds.add(new Round(player2, player1));
         }
       }
     }
@@ -86,10 +86,17 @@ public class GameController {
     GameWorker worker = new GameWorker(this);
     worker.execute();
 
+
+
   }
 
   private void initResultTable(List<IPlayer> playedPlayers) {
     this.results = new ResultMap(playedPlayers);
+    this.gameWindow.getTableModel().setResults(results);
+    this.gameWindow.update(gameWindow.getGraphics());
+  }
+
+  private void updateResultTable() {
     this.gameWindow.getTableModel().setResults(results);
     this.gameWindow.update(gameWindow.getGraphics());
   }
@@ -108,6 +115,7 @@ public class GameController {
       this.results.addResult(round);
       this.roundsPlayed++;
       this.progressBarGameModel.setValue(this.roundsPlayed);
+      this.updateResultTable();
     }
 
   }
@@ -183,6 +191,8 @@ public class GameController {
 
   public void gameFinished() {
     this.gameWindow.activateStartGame();
+    this.progressBarGameModel.setMaximum(1);
+    this.progressBarGameModel.setValue(1);
   }
 
 

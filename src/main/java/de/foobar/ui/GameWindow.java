@@ -212,7 +212,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     this.resultTable.setModel(new PlayerResultTableModel(new ResultMap(new ArrayList<>())));
     this.resultTable.setFillsViewportHeight(true);
     this.resultTable.setPreferredScrollableViewportSize(new Dimension(
-        this.resultTable.getPreferredScrollableViewportSize().width,DEFAULT_TABLE_HEIGHT));
+    this.resultTable.getPreferredScrollableViewportSize().width,DEFAULT_TABLE_HEIGHT));
 
     this.tableModel = new PlayerResultTableModel();
     this.resultTable.setModel(this.tableModel);
