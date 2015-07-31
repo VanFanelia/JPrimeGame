@@ -1,9 +1,9 @@
 package de.foobar.ui;
 
+import de.foobar.IPlayer;
 import de.foobar.mechanic.GameController;
 import de.foobar.mechanic.ResultMap;
 import de.foobar.mechanic.Round;
-import de.foobar.IPlayer;
 import de.foobar.ui.actions.CloseAction;
 import de.foobar.ui.actions.GameRuleAction;
 import de.foobar.ui.actions.HelpAction;
@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.HeadlessException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.accessibility.Accessible;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultBoundedRangeModel;
@@ -136,7 +137,11 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     fightButton.setHorizontalTextPosition(SwingConstants.CENTER);
     fightButton.addActionListener(new StartGameAction(this.gameController, playerList));
 
-    gblm.addComponent(fightButton, 0, 1, 1, 1,0.3,0.3);
+    gblm.addComponent(fightButton, 0, 1, 1, 1, 0.3, 0.3);
+  }
+
+  public void updatePlayerSelectList(List<IPlayer> players) {
+    this.playerList.setPlayerList(players);
   }
 
   public GameController getGameController() {
@@ -177,7 +182,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
     gameMenu.setIcon(GAME_ICON);
 
     JMenuItem loadPlayer = new JMenuItem();
-    loadPlayer.setAction(new LoadPlayerAction());
+    loadPlayer.setAction(new LoadPlayerAction(this.gameController));
     gameMenu.add(loadPlayer);
 
     JMenuItem startGame = new JMenuItem();

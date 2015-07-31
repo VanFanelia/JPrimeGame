@@ -17,13 +17,21 @@ public class PlayerList extends JList<IPlayer> {
 
   /**
    * Default constructor.
+   *
    * @param playerList a list of players
    */
   public PlayerList(List<IPlayer> playerList) {
-    this.playerList = playerList;
 
     this.setCellRenderer(new PlayerListItemRenderer());
+    this.setPlayerList(playerList);
+  }
 
+  /**
+   * setter with refresh.
+   * @param playerList the player list
+   */
+  public void setPlayerList(List<IPlayer> playerList) {
+    this.playerList = playerList;
     this.refreshList();
     this.setVisibleRowCount(VISIBLE_ROW_COUNT);
     this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -48,4 +56,6 @@ public class PlayerList extends JList<IPlayer> {
     }
     return result;
   }
+
+
 }

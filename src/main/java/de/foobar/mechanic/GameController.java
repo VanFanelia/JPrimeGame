@@ -3,6 +3,10 @@ package de.foobar.mechanic;
 import de.foobar.IPlayer;
 import de.foobar.mechanic.runable.GameWorker;
 import de.foobar.ui.GameWindow;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -10,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.DefaultBoundedRangeModel;
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ConfigurationBuilder;
 
 public class GameController {
 
@@ -202,7 +208,81 @@ public class GameController {
     return this.players;
   }
 
+  /**
+   * Add Players to possible player list.
+   * @param newPlayerDirectory new players to add
+   */
+  public void addAdditionalPlayers(File newPlayerDirectory) {
+
+    List<IPlayer> toAdd = new ArrayList<>();
+    File[] files;
+    try {
+      // Convert File to a URL
+      URL url = newPlayerDirectory.toURI().toURL();
+      URL[] urls;
+      if (newPlayerDirectory.isDirectory()) {
+        files = newPlayerDirectory.listFiles();
+        if (files == null) {
+          return;
+        }
+        urls = new URL[ files.length ];
+        for (int i = 0; i < files.length; i++) {
+          urls[i] = files[i].toURI().toURL();
+        }
+      } else {
+        files = new File[]{newPlayerDirectory};
+        urls = new URL[]{url};
+      }
+
+
+      // Create a new class loader with the directory
+      ClassLoader classLoader = new URLClassLoader(urls);
+
+      ConfigurationBuilder builder = new ConfigurationBuilder().addClassLoader(classLoader);
+      builder.setUrls(urls);
+      builder.addScanners(new SubTypesScanner(false));
+      Reflections reflections = new Reflections(builder);
+
+
+
+      reflections = reflections.collect(files[0]);
+
+
+      System.out.println(builder.getUrls());
+
+      Set<Class<? extends IPlayer>> playerClasses = reflections.getSubTypesOf(IPlayer.class);
+
+      for (Class playerClass : playerClasses) {
+        try {
+          toAdd.add((IPlayer) playerClass.newInstance());
+        } catch (InstantiationException | IllegalAccessException e) {
+          e.printStackTrace();
+          System.err.println("Cannot create instance of class from folder");
+        }
+      }
+
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
+
+    //after Load
+    for (IPlayer newPlayer: toAdd) {
+      boolean exists = false;
+      for (IPlayer oldPlayer: this.players) {
+        if (oldPlayer.getClass().getName().equals(newPlayer.getClass().getName())) {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists) {
+        this.players.add(newPlayer);
+      }
+    }
+    this.gameWindow.updatePlayerSelectList(this.players);
+  }
+
   public void setGameSpeed(int milliseconds) {
     this.millisecondsDelayForPick = milliseconds;
   }
+
 }
