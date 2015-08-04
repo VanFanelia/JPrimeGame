@@ -141,42 +141,67 @@ public class GameController {
     // start playing against each other
     boolean playerOneTurn = true;
     this.progressBarRoundModel.setMaximum(DEFAULT_GAME_RANGE);
-    while (!numbers.isEmpty()) {
-      IPlayer currentPlayer = playerOneTurn ? round.getPlayer1() : round.getPlayer2();
-      IPlayer opponent = playerOneTurn ? round.getPlayer2() : round.getPlayer1();
+    try {
+      while (!numbers.isEmpty()) {
+        IPlayer currentPlayer = playerOneTurn ? round.getPlayer1() : round.getPlayer2();
+        IPlayer opponent = playerOneTurn ? round.getPlayer2() : round.getPlayer1();
 
-      // start turn for player
-      int[] transfer = new int[numbers.size()];
-      numbers.sort(comparator);
-      for (int i = 0; i < numbers.size(); i++) {
-        transfer[i] = numbers.get(i);
+        // start turn for player
+        int[] transfer = new int[numbers.size()];
+        numbers.sort(comparator);
+        for (int i = 0; i < numbers.size(); i++) {
+          transfer[i] = numbers.get(i);
+        }
+        // TODO set maximum time limit
+        int pickedNumber = currentPlayer.pickNumber(transfer, round.getScoreOfPlayer(currentPlayer), round.getScoreOfPlayer(opponent));
+
+        if (! numbers.contains(pickedNumber)) {
+          throw new CheatDetectedException("Player picked a invalid number", currentPlayer);
+        }
+
+        // sleep to refresh the ui
+        try {
+          Thread.sleep(this.millisecondsDelayForPick);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+
+        giveNumberToPlayer(pickedNumber, currentPlayer, round);
+        List<Integer> divisors = giveDivisorsToPlayer(pickedNumber, numbers, round, opponent);
+        numbers.remove(new Integer(pickedNumber)); //force Object to remove value
+        numbers.removeAll(divisors);
+
+        System.out.println(currentPlayer.getPlayerName() + " picked: " + pickedNumber + " enemy get: " + divisors);
+
+        playerOneTurn = !playerOneTurn;
+
+        // setProgressBar
+        this.progressBarRoundModel.setValue(this.progressBarRoundModel.getMaximum() - numbers.size());
+
+        // set points and picked:
+        this.gameWindow.setCurrentPlayerPoints(pickedNumber, divisors, round, currentPlayer);
       }
-      // TODO set maximum time limit
-      int pickedNumber = currentPlayer.pickNumber(transfer, round.getScoreOfPlayer(currentPlayer), round.getScoreOfPlayer(opponent));
-
-      // sleep to refresh the ui
-      try {
-        Thread.sleep(this.millisecondsDelayForPick);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
+    } catch (CheatDetectedException e) {
+      System.out.println("Cheater detected: " + e.getCheater().getPlayerName() );
+      if (this.currentRound.getPlayer1().equals(e.getCheater())) {
+        this.currentRound.setScorePlayer1(0);
+        giveAllNumbersToPlayer(this.currentRound, this.currentRound.getPlayer2(), numbers);
+      } else {
+        this.currentRound.setScorePlayer2(0);
+        giveAllNumbersToPlayer(this.currentRound, this.currentRound.getPlayer1(), numbers);
       }
-
-      giveNumberToPlayer(pickedNumber, currentPlayer, round);
-      List<Integer> divisors = giveDivisorsToPlayer(pickedNumber, numbers, round, opponent);
-      numbers.remove(new Integer(pickedNumber)); //force Object to remove value
-      numbers.removeAll(divisors);
-
-      System.out.println(currentPlayer.getPlayerName() + " picked: " + pickedNumber + " enemy get: " + divisors);
-
-      playerOneTurn = !playerOneTurn;
 
       // setProgressBar
-      this.progressBarRoundModel.setValue(this.progressBarRoundModel.getMaximum() - numbers.size());
+      //this.progressBarRoundModel.setValue(this.progressBarRoundModel.getMaximum());
+      //this.gameFinished();
 
-      // set points and picked:
-      this.gameWindow.setCurrentPlayerPoints(pickedNumber, divisors, round, currentPlayer);
     }
+  }
 
+  private void giveAllNumbersToPlayer(Round round, IPlayer player, List<Integer> numbers) {
+    for (int number: numbers){
+      round.addScore(player, number);
+    }
   }
 
   private List<Integer> giveDivisorsToPlayer(int pickedNumber, List<Integer> numbers, Round round, IPlayer opponent) {
