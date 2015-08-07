@@ -11,12 +11,13 @@ import de.foobar.ui.actions.GameRuleAction;
 import de.foobar.ui.actions.HelpAction;
 import de.foobar.ui.actions.LoadPlayerAction;
 import de.foobar.ui.actions.StartGameAction;
+import de.foobar.ui.elements.IntTextField;
 import de.foobar.ui.elements.PlayerList;
 import de.foobar.ui.elements.PlayerResultTableModel;
-
 import de.foobar.ui.layout.GridBagLayoutManager;
 import de.foobar.ui.listener.GameSpeedChangeListener;
 
+import de.foobar.ui.listener.StartNumberChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -79,6 +80,7 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
   private JLabel lastPlayerRight;
 
   private JButton fightButton;
+  private IntTextField numberPoolInput;
 
   private JProgressBar currentRoundProgressBar;
   private JProgressBar currentGameProgressBar;
@@ -115,6 +117,8 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
     generatePlayerSelectList();
 
+    generateStartButtonAndGameSettings();
+
     generateCurrentFightPanel(gblm);
 
     generateLastFightPanel();
@@ -133,14 +137,22 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
   private void generatePlayerSelectList() {
 
     this.playerList = new PlayerList(this.gameController.searchClassPathForPlayerList());
-    gblm.addComponent(new JScrollPane(this.playerList),0,0,1,1);
+    gblm.addComponent(new JScrollPane(this.playerList),0,0,2,1);
 
+  }
+
+  private void generateStartButtonAndGameSettings() {
     this.fightButton = new JButton("=- fight -=");
     fightButton.setVerticalTextPosition(SwingConstants.CENTER);
     fightButton.setHorizontalTextPosition(SwingConstants.CENTER);
     fightButton.addActionListener(new StartGameAction(this.gameController, playerList));
 
-    gblm.addComponent(fightButton, 0, 1, 1, 1, 0.3, 0.3);
+    gblm.addComponent(fightButton, 0, 1, 1, 1, 1, 0.3);
+
+    this.numberPoolInput = new IntTextField(1000,10);
+    this.numberPoolInput.getDocument().addDocumentListener(new StartNumberChangeListener(this.gameController,this.numberPoolInput));
+
+    gblm.addComponent(this.numberPoolInput, 1,1,1,1);
   }
 
   public void updatePlayerSelectList(List<IPlayer> players) {
@@ -446,6 +458,5 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
 
   }
-
 
 }

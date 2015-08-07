@@ -41,6 +41,7 @@ public class GameController {
   private DefaultBoundedRangeModel progressBarGameModel;
 
   public int millisecondsDelayForPick = 500;
+  private int numberPoolSize = DEFAULT_GAME_RANGE;
 
   public GameController() {
   }
@@ -55,11 +56,13 @@ public class GameController {
   public void startGameInBackground() {
     this.roundsPlayed = 0;
 
+    int currentGamePool = getNumberPoolSize();
+    System.out.println("Game Pool is:" + currentGamePool);
     this.progressBarGameModel.setValue(this.roundsPlayed);
     this.progressBarGameModel.setMaximum(this.rounds.size());
 
     for (Round round : this.rounds) {
-      this.startRound(round);
+      this.startRound(round, currentGamePool);
 
       // finished:
       this.results.addResult(round);
@@ -124,7 +127,7 @@ public class GameController {
   }
 
 
-  private void startRound(Round round) {
+  private void startRound(Round round, int currentGamePool) {
 
     Round lastRound = this.currentRound;
     this.currentRound = round;
@@ -134,13 +137,13 @@ public class GameController {
 
     // init numbers
     List<Integer> numbers = new ArrayList<>();
-    for (int i = 1; i < DEFAULT_GAME_RANGE; i++ ) {
+    for (int i = 1; i < currentGamePool; i++ ) {
       numbers.add(i);
     }
 
     // start playing against each other
     boolean playerOneTurn = true;
-    this.progressBarRoundModel.setMaximum(DEFAULT_GAME_RANGE);
+    this.progressBarRoundModel.setMaximum(currentGamePool);
     try {
       while (!numbers.isEmpty()) {
         IPlayer currentPlayer = playerOneTurn ? round.getPlayer1() : round.getPlayer2();
@@ -330,4 +333,11 @@ public class GameController {
     this.millisecondsDelayForPick = milliseconds;
   }
 
+  public void setNumberPoolSize(int numberPoolSize) {
+    this.numberPoolSize = numberPoolSize;
+  }
+
+  public int getNumberPoolSize() {
+    return numberPoolSize;
+  }
 }
