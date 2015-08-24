@@ -16,8 +16,8 @@ import de.foobar.ui.elements.PlayerList;
 import de.foobar.ui.elements.PlayerResultTableModel;
 import de.foobar.ui.layout.GridBagLayoutManager;
 import de.foobar.ui.listener.GameSpeedChangeListener;
-
 import de.foobar.ui.listener.StartNumberChangeListener;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -80,7 +80,6 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
   private JLabel lastPlayerRight;
 
   private JButton fightButton;
-  private IntTextField numberPoolInput;
 
   private JProgressBar currentRoundProgressBar;
   private JProgressBar currentGameProgressBar;
@@ -149,10 +148,10 @@ public class GameWindow extends JFrame implements WindowConstants, Accessible, R
 
     gblm.addComponent(fightButton, 0, 1, 1, 1, 1, 0.3);
 
-    this.numberPoolInput = new IntTextField(1000,10);
-    this.numberPoolInput.getDocument().addDocumentListener(new StartNumberChangeListener(this.gameController,this.numberPoolInput));
+    IntTextField numberPoolInput = new IntTextField(1000, 10);
+    numberPoolInput.getDocument().addDocumentListener(new StartNumberChangeListener(this.gameController, numberPoolInput));
 
-    gblm.addComponent(this.numberPoolInput, 1,1,1,1);
+    gblm.addComponent(numberPoolInput, 1,1,1,1);
   }
 
   public void updatePlayerSelectList(List<IPlayer> players) {

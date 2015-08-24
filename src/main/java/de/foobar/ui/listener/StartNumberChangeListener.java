@@ -2,6 +2,7 @@ package de.foobar.ui.listener;
 
 import de.foobar.mechanic.GameController;
 import de.foobar.ui.elements.IntTextField;
+
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -19,7 +20,6 @@ public class StartNumberChangeListener implements DocumentListener {
 
   @Override
   public void insertUpdate(DocumentEvent event) {
-    //System.out.println(event);
     controller.setNumberPoolSize(this.inputField.getValue());
   }
 

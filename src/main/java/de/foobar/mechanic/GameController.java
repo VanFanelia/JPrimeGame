@@ -31,11 +31,7 @@ public class GameController {
 
   private ResultMap results;
 
-  private int roundsPlayed = 0;
-
   private Round currentRound;
-
-  private Boolean gameRunning = false;
 
   private DefaultBoundedRangeModel progressBarRoundModel;
   private DefaultBoundedRangeModel progressBarGameModel;
@@ -54,11 +50,11 @@ public class GameController {
    * start a game in background.
    */
   public void startGameInBackground() {
-    this.roundsPlayed = 0;
+    int roundsPlayed = 0;
 
     int currentGamePool = getNumberPoolSize();
     System.out.println("Game Pool is:" + currentGamePool);
-    this.progressBarGameModel.setValue(this.roundsPlayed);
+    this.progressBarGameModel.setValue(roundsPlayed);
     this.progressBarGameModel.setMaximum(this.rounds.size());
 
     for (Round round : this.rounds) {
@@ -66,8 +62,8 @@ public class GameController {
 
       // finished:
       this.results.addResult(round);
-      this.roundsPlayed++;
-      this.progressBarGameModel.setValue(this.roundsPlayed);
+      roundsPlayed++;
+      this.progressBarGameModel.setValue(roundsPlayed);
       this.updateResultTable();
     }
   }
@@ -80,7 +76,6 @@ public class GameController {
     System.out.println("Game Start:");
     System.out.println(playerList);
 
-    this.gameRunning = true;
     this.gameWindow.deactivateStartGame();
 
     final Set<IPlayer> playedPlayers = new HashSet<>();
@@ -193,16 +188,11 @@ public class GameController {
         this.currentRound.setScorePlayer2(0);
         giveAllNumbersToPlayer(this.currentRound, this.currentRound.getPlayer1(), numbers);
       }
-
-      // setProgressBar
-      //this.progressBarRoundModel.setValue(this.progressBarRoundModel.getMaximum());
-      //this.gameFinished();
-
     }
   }
 
   private void giveAllNumbersToPlayer(Round round, IPlayer player, List<Integer> numbers) {
-    for (int number: numbers){
+    for (int number: numbers) {
       round.addScore(player, number);
     }
   }
@@ -227,11 +217,6 @@ public class GameController {
     this.gameWindow.activateStartGame();
     this.progressBarGameModel.setMaximum(1);
     this.progressBarGameModel.setValue(1);
-  }
-
-
-  public int getRoundCount() {
-    return this.rounds.size();
   }
 
   /**

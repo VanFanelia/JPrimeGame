@@ -16,15 +16,15 @@ public class IntTextField extends JTextField {
   @Override
   public boolean isValid() {
     try {
-      Integer.parseInt(getText());
-      return true;
+      int input = Integer.parseInt(getText());
+      return input > 1;
     } catch (NumberFormatException | NullPointerException e) {
       return false;
     }
   }
 
   /**
-   * get int value of text field
+   * Get int value of text field.
    * @return int value
    */
   public int getValue() {
